@@ -18,7 +18,6 @@
   <img src="https://img.shields.io/badge/design-dark%20glass-0A0A0A?style=flat-square" />
 </p>
 
----
 
 ## What is this?
 
@@ -26,7 +25,6 @@ Mission Control is a **native macOS desktop app** that serves as a real-time das
 
 This isn't a static dashboard. **Every panel is live. Every button does something real.**
 
----
 
 ## ✨ Features
 
@@ -41,7 +39,6 @@ This isn't a static dashboard. **Every panel is live. Every button does somethin
 | **Node Status** | Monitor your connected node details and availability. |
 | **Skills Arsenal** | View all installed agent skills and capabilities. |
 
----
 
 ## 🖥️ Screenshots
 
@@ -51,7 +48,6 @@ This isn't a static dashboard. **Every panel is live. Every button does somethin
 
 ![OpenClaw Mission Control](./screenshots/mission-control.png)
 
----
 
 ## 🏗️ Architecture
 
@@ -71,7 +67,6 @@ This isn't a static dashboard. **Every panel is live. Every button does somethin
 
 The app reads your gateway config on launch, establishes a WebSocket connection, and keeps everything in sync. All communication stays on `localhost` — your data never leaves your machine.
 
----
 
 ## 📦 Project Structure
 
@@ -101,7 +96,6 @@ The app reads your gateway config on launch, establishes a WebSocket connection,
 └── build-and-install.sh
 ```
 
----
 
 ## 🚀 Getting Started
 
@@ -132,7 +126,6 @@ swift build
 
 This creates `~/Applications/Sparks Mission Control.app` — drag it to your Dock.
 
----
 
 ## ⚙️ Configuration
 
@@ -147,7 +140,6 @@ The app auto-discovers your OpenClaw setup by reading local files from `~/.openc
 
 No manual configuration is required. If OpenClaw is running, Mission Control connects automatically.
 
----
 
 ## 🧩 Customization
 
@@ -168,7 +160,6 @@ Use `USER.md` to set:
 |---|---|
 | `Name:` | `Alex` |
 
----
 
 ## 🎨 Design Language
 
@@ -179,7 +170,6 @@ Use `USER.md` to set:
 - **16pt corner radius** — Consistent card geometry
 - Native macOS window chrome with transparent titlebar
 
----
 
 ## 🛠️ Tech Stack
 
@@ -191,7 +181,6 @@ Use `USER.md` to set:
 | **Combine / async-await** | Reactive state management |
 | **AppKit** | Window configuration & native integration |
 
----
 
 ## 🗺️ Roadmap
 
@@ -203,7 +192,6 @@ Use `USER.md` to set:
 - [ ] Touch Bar support
 - [ ] Keyboard shortcuts for all actions
 
----
 
 ## 🤝 Contributing
 
@@ -215,13 +203,11 @@ Contributions welcome. Open an issue or submit a PR.
 4. Push (`git push origin feature/awesome`)
 5. Open a PR
 
----
 
 ## 📄 License
 
 MIT © Joey Rodriguez
 
----
 
 <p align="center">
   <strong>⚡ Built by <a href="https://github.com/joeynyc">Joey Rodriguez</a></strong><br/>
