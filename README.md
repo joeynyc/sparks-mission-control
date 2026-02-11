@@ -115,8 +115,8 @@ The app reads your gateway config on launch, establishes a WebSocket connection,
 
 ```bash
 # Clone
-git clone https://github.com/joeynyc/sparks-mission-control.git
-cd sparks-mission-control
+git clone https://github.com/joeynyc/openclaw-mission-control.git
+cd openclaw-mission-control
 
 # Build and launch
 swift build
