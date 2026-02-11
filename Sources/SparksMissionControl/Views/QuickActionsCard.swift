@@ -14,12 +14,12 @@ struct QuickActionsCard: View {
 
         var id: String { rawValue }
 
-        var placeholder: String {
+        func placeholder(agentName: String) -> String {
             switch self {
             case .searchMemory:
-                return "What should Sparks search memory for?"
+                return "What should \(agentName) search memory for?"
             case .webSearch:
-                return "What should Sparks search on the web?"
+                return "What should \(agentName) search on the web?"
             case .spawnSubAgent:
                 return "What should the sub-agent do?"
             }
@@ -92,7 +92,7 @@ struct QuickActionsCard: View {
         .sheet(item: $promptAction) { action in
             PromptSheet(
                 title: action.rawValue,
-                placeholder: action.placeholder,
+                placeholder: action.placeholder(agentName: appState.agentIdentity.name),
                 text: $promptText,
                 onSubmit: {
                     let value = promptText

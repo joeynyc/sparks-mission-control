@@ -87,9 +87,9 @@ private struct TitleBarStrip: View {
 
             // Title
             HStack(spacing: 6) {
-                Text("⚡")
+                Text(appState.agentIdentity.emoji)
                     .font(.system(size: 16))
-                Text("SPARKS")
+                Text(appState.agentIdentity.name.uppercased())
                     .font(.system(size: 13, weight: .bold, design: .default))
                     .tracking(2.5)
                     .foregroundStyle(Theme.accentYellow)

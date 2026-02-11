@@ -20,13 +20,14 @@ struct IdentityCard: View {
                         .frame(width: 50, height: 50)
                         .shadow(color: Theme.accentYellow.opacity(0.3), radius: 12, y: 4)
 
-                    Text("⚡")
+                    Text(appState.agentIdentity.emoji)
                         .font(.system(size: 26))
+                        .accessibilityLabel("\(appState.agentIdentity.name) avatar")
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
-                        Text("Sparks")
+                        Text(appState.agentIdentity.name)
                             .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(Theme.textPrimary)
 
@@ -46,14 +47,14 @@ struct IdentityCard: View {
                             )
                     }
 
-                    Text("Live wire · Executive Assistant to Joey")
+                    Text("\(appState.agentIdentity.creature) · Assistant to \(appState.ownerName)")
                         .font(.system(size: 12))
                         .foregroundStyle(Theme.textSecondary)
 
                     HStack(spacing: 8) {
                         HStack(spacing: 4) {
                             Circle().fill(Theme.purple).frame(width: 5, height: 5)
-                            Text("claude-opus-4-6")
+                            Text(appState.modelRouting.primary)
                                 .font(Theme.mono(10))
                                 .foregroundStyle(Theme.purple)
                         }

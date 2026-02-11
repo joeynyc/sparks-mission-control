@@ -18,10 +18,10 @@ struct ChatView: View {
                                         .fill(Theme.accentYellow.opacity(0.06))
                                         .frame(width: 80, height: 80)
                                         .blur(radius: 12)
-                                    Text("⚡")
+                                    Text(appState.agentIdentity.emoji)
                                         .font(.system(size: 38))
                                 }
-                                Text("Message Sparks")
+                                Text("Message \(appState.agentIdentity.name)")
                                     .font(.system(size: 14, weight: .medium))
                                     .foregroundStyle(Theme.textSecondary)
                                 Text("Sends via gateway webhook → agent run")
@@ -52,7 +52,11 @@ struct ChatView: View {
                 .frame(minHeight: 280)
 
                 HStack(spacing: 10) {
-                    ChatTextField(text: $draft, placeholder: "Message Sparks...", onSubmit: sendMessage)
+                    ChatTextField(
+                        text: $draft,
+                        placeholder: "Message \(appState.agentIdentity.name)...",
+                        onSubmit: sendMessage
+                    )
                         .frame(height: 42)
 
                     Button(action: sendMessage) {

@@ -17,7 +17,7 @@ struct NodeCard: View {
                     .frame(width: 38, height: 38)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Joey's Mac Mini")
+                    Text(appState.nodeDisplayName)
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(Theme.textPrimary)
                     Text("M4 · \(appState.nodeInfo.ip)")

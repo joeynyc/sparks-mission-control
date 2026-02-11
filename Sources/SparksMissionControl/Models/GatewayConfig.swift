@@ -11,6 +11,7 @@ struct GatewayConfig: Sendable {
     let gatewayToken: String   // gateway.auth.token — for health checks
     let hooksToken: String     // hooks.token — for /hooks/* API
     let modelRouting: ModelRoutingInfo
+    let nodeName: String
 
     /// Convenience — the token used for HTTP health checks
     var token: String { gatewayToken }
@@ -30,7 +31,8 @@ struct GatewayConfig: Sendable {
                 port: defaultPort,
                 gatewayToken: "",
                 hooksToken: "",
-                modelRouting: ModelRoutingInfo(primary: "claude-opus-4-6", fallbackModels: [], aliases: [:])
+                modelRouting: ModelRoutingInfo(primary: "claude-opus-4-6", fallbackModels: [], aliases: [:]),
+                nodeName: "Connected Node"
             )
         }
 
@@ -82,11 +84,14 @@ struct GatewayConfig: Sendable {
             }
         }
 
+        let nodeName = nodeDisplayName(in: object) ?? "Connected Node"
+
         return GatewayConfig(
             port: port,
             gatewayToken: gatewayToken,
             hooksToken: hooksToken,
-            modelRouting: ModelRoutingInfo(primary: primary, fallbackModels: fallbacks, aliases: aliases)
+            modelRouting: ModelRoutingInfo(primary: primary, fallbackModels: fallbacks, aliases: aliases),
+            nodeName: nodeName
         )
     }
 
@@ -146,6 +151,47 @@ struct GatewayConfig: Sendable {
             }
         }
         return [:]
+    }
+
+    private static func nodeDisplayName(in root: [String: Any]) -> String? {
+        if let explicit = optionalString(
+            in: root,
+            paths: [
+                ["node", "name"],
+                ["nodes", "default", "name"],
+                ["nodes", "local", "name"],
+                ["agents", "defaults", "node", "name"],
+                ["gateway", "node", "name"],
+            ]
+        ) {
+            return explicit
+        }
+
+        if
+            let nodes = value(in: root, path: ["nodes"]) as? [String: Any] {
+            for value in nodes.values {
+                if
+                    let node = value as? [String: Any],
+                    let name = node["name"] as? String,
+                    !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    return name
+                }
+            }
+        }
+
+        return nil
+    }
+
+    private static func optionalString(in root: [String: Any], paths: [[String]]) -> String? {
+        for path in paths {
+            if let value = value(in: root, path: path) as? String {
+                let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+                if !trimmed.isEmpty {
+                    return trimmed
+                }
+            }
+        }
+        return nil
     }
 
     private static func value(in root: [String: Any], path: [String]) -> Any? {

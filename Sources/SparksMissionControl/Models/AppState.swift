@@ -78,6 +78,8 @@ struct CommandResult {
 
 @MainActor
 final class AppState: ObservableObject {
+    @Published var agentIdentity: AgentIdentity
+    @Published var ownerName: String
     @Published var connectionState: GatewayConnection.ConnectionState = .disconnected
     @Published var messages: [ChatMessage] = []
     @Published var activityLog: [ActivityEntry] = []
@@ -103,9 +105,18 @@ final class AppState: ObservableObject {
 
     init() {
         let config = GatewayConfig.loadFromDisk()
+        let agentIdentity = AgentIdentity.loadFromDisk()
+        let ownerName = AgentIdentity.loadOwnerName()
+        self.agentIdentity = agentIdentity
+        self.ownerName = ownerName
         self.config = config
         self.modelRouting = config.modelRouting
-        self.connection = GatewayConnection(port: config.port, gatewayToken: config.gatewayToken, hooksToken: config.hooksToken)
+        self.connection = GatewayConnection(
+            port: config.port,
+            gatewayToken: config.gatewayToken,
+            hooksToken: config.hooksToken,
+            primaryModel: config.modelRouting.primary
+        )
 
         wireGatewayCallbacks()
         loadSkills()
@@ -148,6 +159,11 @@ final class AppState: ObservableObject {
         formatter.timeZone = estTimeZone
         formatter.dateFormat = "EEE MMM d, h:mm:ss a 'EST'"
         return formatter.string(from: currentESTTime)
+    }
+
+    var nodeDisplayName: String {
+        let trimmed = config.nodeName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? "Connected Node" : trimmed
     }
 
     func sendChat(text: String) {
@@ -365,18 +381,35 @@ final class AppState: ObservableObject {
         var collected: Set<String> = []
         let manager = FileManager.default
         let roots = [
-            NSString(string: "~/.agents/skills").expandingTildeInPath,
-            NSString(string: "~/.codex/skills").expandingTildeInPath,
+            NSString(string: "~/.openclaw/skills").expandingTildeInPath,
+            NSString(string: "~/.openclaw/clawd/skills").expandingTildeInPath,
+            NSString(string: "~/clawd/skills").expandingTildeInPath,
+            "/opt/homebrew/lib/node_modules/openclaw/skills",
         ]
 
         for root in roots {
-            guard let entries = try? manager.contentsOfDirectory(atPath: root) else { continue }
-            for entry in entries where !entry.hasPrefix(".") {
-                collected.insert(entry)
+            let rootURL = URL(fileURLWithPath: root, isDirectory: true)
+            guard
+                let entries = try? manager.contentsOfDirectory(
+                    at: rootURL,
+                    includingPropertiesForKeys: [.isDirectoryKey],
+                    options: [.skipsHiddenFiles]
+                )
+            else { continue }
+
+            for entryURL in entries {
+                var isDirectory: ObjCBool = false
+                guard manager.fileExists(atPath: entryURL.path, isDirectory: &isDirectory), isDirectory.boolValue else {
+                    continue
+                }
+
+                let skillFile = entryURL.appendingPathComponent("SKILL.md")
+                guard manager.fileExists(atPath: skillFile.path) else { continue }
+                collected.insert(entryURL.lastPathComponent)
             }
         }
 
-        skills = collected.sorted()
+        skills = collected.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
     }
 
     private func startClock() {

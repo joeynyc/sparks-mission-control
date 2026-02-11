@@ -20,6 +20,7 @@ final class GatewayConnection: @unchecked Sendable {
     private let port: Int
     private let gatewayToken: String  // For health checks
     private let hooksToken: String    // For /hooks/* API
+    private let primaryModel: String
     private let host = "127.0.0.1"
     private let session: URLSession
 
@@ -30,10 +31,11 @@ final class GatewayConnection: @unchecked Sendable {
     var onStateChange: (@MainActor (ConnectionState) -> Void)?
     var onEvent: (@MainActor (GatewayEvent) -> Void)?
 
-    init(port: Int, gatewayToken: String, hooksToken: String, session: URLSession = .shared) {
+    init(port: Int, gatewayToken: String, hooksToken: String, primaryModel: String, session: URLSession = .shared) {
         self.port = port
         self.gatewayToken = gatewayToken
         self.hooksToken = hooksToken
+        self.primaryModel = primaryModel
         self.session = session
     }
 
@@ -88,10 +90,11 @@ final class GatewayConnection: @unchecked Sendable {
         }
     }
 
-    /// Send a message to Sparks via /v1/chat/completions (synchronous, returns real response)
+    /// Send a message via /v1/chat/completions (synchronous, returns real response)
     func sendMessage(_ message: String) async throws -> String {
+        let model = primaryModel.isEmpty ? "claude-opus-4-6" : primaryModel
         let payload: [String: Any] = [
-            "model": "anthropic/claude-opus-4-6",
+            "model": model,
             "messages": [
                 ["role": "user", "content": message]
             ]
